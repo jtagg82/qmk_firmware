@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include QMK_KEYBOARD_H
+#include <print.h>
 
 enum encoder_functions {
     VOL,
@@ -25,14 +26,15 @@ enum layer_names {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Base */
     [_BASE] = LAYOUT(
-        KC_ESC,          KC_F1,
-	KC_GRAVE, KC_1,  KC_2,
-	KC_TAB,   KC_Q,  KC_W
+KC_ESC,           KC_F1,   KC_F2,  
+KC_GRV,  KC_1,    KC_2,    KC_3/*,
+KC_TAB,      KC_Q,    KC_W,    KC_E*/
     ),
     //[_FN] = LAYOUT(
     //    _______, _______,  _______, RESET, RESET    ,  XXXXXXX, _______
     //)
 };
+
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) { /* First encoder */
@@ -77,6 +79,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+	#ifdef CONSOLE_ENABLE
+    		uprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
+	#endif
     switch (keycode) {
 	case ENCOCLICK:
 	    if (record->event.pressed) {
