@@ -13,8 +13,8 @@
 #define PRODUCT      i9
 
 /* key matrix size */
-#define MATRIX_ROWS 1
-#define MATRIX_COLS 3
+#define MATRIX_ROWS 2
+#define MATRIX_COLS 4
 
 /*
  * Keyboard Matrix Assignments
@@ -27,16 +27,16 @@
  *                  diode)
  *
  */
-#define MATRIX_ROW_PINS { F4 }
-#define MATRIX_COL_PINS { E6, B4, B5 }
+#define MATRIX_ROW_PINS {}
+#define MATRIX_COL_PINS {}
 #define UNUSED_PINS
 
 /* COL2ROW, ROW2COL */
-#define DIODE_DIRECTION COL2ROW
+#define DIODE_DIRECTION ROW2COL
 
 // ENCODER
-#define ENCODERS_PAD_A { D3 }
-#define ENCODERS_PAD_B { D2 }
+#define ENCODERS_PAD_A { D2 }
+#define ENCODERS_PAD_B { D3 }
 #define ENCODER_RESOLUTION 4
 #define ENCODER_DEFAULT_POS 0x3
 

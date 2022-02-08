@@ -13,12 +13,12 @@
  * The second converts the arguments into a two-dimensional array which
  * represents the switch matrix.
  */
-#define LAYOUT( \
-    k00,      k02, \
-    k10, k11, k12, \
-    k20, k21, k22  \
-) { \
-    { k00, KC_NO, k02 }, \
-    { k10, k11, k12 },  \
-    { k20, k21, k22 }  \
+#define LAYOUT(         \
+    k00,      k02, k03, \
+    k10, k11, k12, k13/*, \
+    k20, k21, k22, k23 */ \
+) {                     \
+    { k00, KC_NO, k02, k03 }, \
+    { k10, k11,   k12, k13 }/*, \
+    { k20, k21,   k22, k23 }*/  \
 }
