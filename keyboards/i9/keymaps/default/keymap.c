@@ -14,28 +14,45 @@ enum encoder_functions {
 enum encoder_functions encoder_state = VOL;
 
 enum my_keycodes {
-    ENCOCLICK = SAFE_RANGE
+    ENCO = SAFE_RANGE
 };
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
-    _BASE,
+    _QWERTY,
     _FN
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Base */
-    [_BASE] = LAYOUT(
-KC_ESC,           KC_F1,   KC_F2,  
-KC_GRV,  KC_1,    KC_2,    KC_3/*,
-KC_TAB,      KC_Q,    KC_W,    KC_E*/
+    [_QWERTY] = LAYOUT(
+	 KC_ESC,      KC_F1 , KC_F2 , KC_F3 , KC_F4 ,      KC_F5 , KC_F6 , KC_F7 , KC_F8 ,       KC_F9 , KC_F10, KC_F11, KC_F12,   KC_PSCR, ENCO  ,KC_PAUS,                           KC_MUTE,
+	 KC_GRV,  KC_1 ,  KC_2 ,  KC_3 ,  KC_4 ,  KC_5 ,  KC_6 ,  KC_7 ,  KC_8 ,  KC_9 ,  KC_0 ,KC_MINS, KC_EQL,    KC_BSPC    ,    KC_INS,KC_HOME,KC_PGUP,   KC_CALC,KC_PSLS,KC_PAST,KC_PMNS,
+	   KC_TAB  ,  KC_Q ,  KC_W ,  KC_E ,  KC_R ,  KC_T ,  KC_Y ,  KC_U ,  KC_I ,  KC_O ,  KC_P ,KC_LBRC,KC_RBRC,  KC_BSLS  ,    KC_DEL, KC_END,KC_PGDN,    KC_P7 , KC_P8 , KC_P9 ,
+	   MO(_FN)   ,  KC_A ,  KC_S ,  KC_D ,  KC_F ,  KC_G ,  KC_H ,  KC_J ,  KC_K ,  KC_L ,KC_SCLN,KC_QUOT,     KC_ENT      ,                               KC_P4 , KC_P5 , KC_P6 , KC_PPLS,
+	     KC_LSFT     ,  KC_Z ,  KC_X ,  KC_C ,  KC_V ,  KC_B ,  KC_N ,  KC_M ,KC_COMM, KC_DOT,KC_SLSH,       KC_RSFT       ,            KC_UP ,            KC_P1 , KC_P2 , KC_P3 ,
+	 KC_LCTL , KC_LWIN , KC_LALT ,                     KC_SPACE                    , KC_RALT , KC_RWIN , KC_APP  , KC_RCTL ,   KC_LEFT,KC_DOWN,KC_RGHT,        KC_P0     ,KC_PDOT, KC_PENT
     ),
+    [_FN] = LAYOUT(
+        _______,     _______,_______,_______,_______,     _______,_______,_______,_______,      _______,_______,_______,_______,   _______,KC_SCRL,_______,                           _______,
+        _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,   _______     ,   _______,_______,_______,    KC_NUM,_______,_______,_______,
+          _______  ,KC_MPRV,KC_MPLY,KC_MNXT,_______,_______,_______,_______, KC_UP ,_______,_______,_______,_______,  _______  ,   _______,_______,_______,   _______,_______,_______,
+           _______   ,_______,_______,_______,_______,_______,_______,KC_LEFT,KC_DOWN,KC_RGHT,_______,_______,   _______       ,                              _______,_______,_______,_______,
+             _______     ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,       _______       ,           _______,           _______,_______,_______,
+         _______ , _______ , _______ ,                     _______                     , KC_CAPS , _______ , _______ , _______ ,   _______,_______,_______,       _______    ,_______,_______
+    ),
+
     //[_FN] = LAYOUT(
-    //    _______, _______,  _______, RESET, RESET    ,  XXXXXXX, _______
+    //    _______,     _______,_______,_______,_______,     _______,_______,_______,_______,      _______,_______,_______,_______,   _______,_______,_______,                           _______,
+    //    _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,   _______     ,   _______,_______,_______,   _______,_______,_______,_______,
+    //      _______  ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,  _______  ,   _______,_______,_______,   _______,_______,_______,
+    //       _______   ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,   _______       ,                              _______,_______,_______,_______,
+    //         _______     ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,       _______       ,           _______,           _______,_______,_______,
+    //     _______ , _______ , _______ ,                     _______                     , _______ , _______ , _______ , _______ ,   _______,_______,_______,       _______    ,_______,_______
     //)
 };
 
-
+// Quadrature encoder behavior
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) { /* First encoder */
         if (clockwise)
@@ -79,11 +96,8 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-	#ifdef CONSOLE_ENABLE
-    		uprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
-	#endif
     switch (keycode) {
-	case ENCOCLICK:
+	case ENCO:
 	    if (record->event.pressed) {
 	        switch (encoder_state) {
 		    case VOL:
@@ -114,8 +128,8 @@ bool oled_task_user(void) {
     oled_write_P(PSTR("Layer:    "), false);
 
     switch (get_highest_layer(layer_state)) {
-        case _BASE:
-            oled_write_P(PSTR("Default\n"), false);
+        case _QWERTY:
+            oled_write_P(PSTR("QWERTY\n"), false);
             break;
         case _FN:
             oled_write_P(PSTR("FN\n"), false);
@@ -150,10 +164,9 @@ bool oled_task_user(void) {
     oled_write_P(led_state.num_lock ? PSTR("NUM ") : PSTR("    "), false);
     oled_write_P(led_state.caps_lock ? PSTR("CAPS ") : PSTR("     "), false);
     oled_write_P(led_state.scroll_lock ? PSTR("SCROLL") : PSTR("      "), false);
-
+    oled_write_P(PSTR("   i9"), false);
     return false;
 }
-
 #endif
 
 
