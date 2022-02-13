@@ -13,8 +13,8 @@
 #define PRODUCT      i9
 
 /* key matrix size */
-#define MATRIX_ROWS 2
-#define MATRIX_COLS 4
+#define MATRIX_ROWS 6
+#define MATRIX_COLS 21
 
 /*
  * Keyboard Matrix Assignments
