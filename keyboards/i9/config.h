@@ -48,6 +48,8 @@
 #define TAPPING_TERM 200
 #define TAPPING_TERM_PER_KEY
 
+// Unicode support type using wincompose
+#define UNICODE_SELECTED_MODES UC_WINC
 
 /*
  * Split Keyboard specific options, make sure you have 'SPLIT_KEYBOARD = yes' in your rules.mk, and define SOFT_SERIAL_PIN.
