@@ -8,7 +8,6 @@ BOOTLOADER = caterina
 #   change yes to no to disable
 #
 EXTRAKEY_ENABLE = yes		# Audio control and System control
-COMMAND_ENABLE = no			# Commands for debug and configuration
 NKRO_ENABLE = yes           # Enable N-Key Rollover
 OLED_ENABLE = yes
 OLED_DRIVER = SSD1306
