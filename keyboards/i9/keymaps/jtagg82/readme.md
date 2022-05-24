@@ -1,1 +1,1 @@
-# The default keymap for kheyboard
+# The main keymap I use

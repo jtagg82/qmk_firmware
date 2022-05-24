@@ -26,7 +26,7 @@ we must always shift and latch to validate the new output.
 
 74HC595 Shift register
       ____ ____
-     |    u    |
+     |    U    |
  Qb [| 1 o  16 |] Vcc
  Qc [| 2    15 |] Qa
  Qd [| 3    14 |] Input
@@ -54,9 +54,7 @@ void matrix_init_custom(void) {
     setPinInputHigh(ROW6);
 }
 
-void reset_col(void) {
-    // Sets the input of the shift register LOW, which will start a new scan series by activating the first column
-    writePinLow(SR_INPUT);
+void shift(void) {
     // toggles both shifting and latching of the shift register
     writePinHigh(SR_SHIFT);
     writePinLow(SR_SHIFT);
@@ -64,14 +62,16 @@ void reset_col(void) {
     writePinLow(SR_LATCH);
 }
 
+void reset_col(void) {
+    // Sets the input of the shift register LOW, which will start a new scan series by activating the first column
+    writePinLow(SR_INPUT);
+    shift();
+}
+
 void next_col(void) {
     // When shifting to the next output, we input a HIGH, which means that we are not activating any further columns
     writePinHigh(SR_INPUT);
-    // toggles both shifting and latching of the shift register
-    writePinHigh(SR_SHIFT);
-    writePinLow(SR_SHIFT);
-    writePinHigh(SR_LATCH);
-    writePinLow(SR_LATCH);
+    shift();
 }
 
 
