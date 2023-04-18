@@ -41,6 +41,7 @@ GND [| 8     9 |] SQh
 
 
 void matrix_init_custom(void) {
+    // Set the pins that control the shift registers as outputs
     setPinOutput(SR_INPUT);
     setPinOutput(SR_LATCH);
     setPinOutput(SR_SHIFT);
@@ -54,7 +55,7 @@ void matrix_init_custom(void) {
     setPinInputHigh(ROW6);
 }
 
-void shift(void) {
+inline void shift(void) {
     // toggles both shifting and latching of the shift register
     writePinHigh(SR_SHIFT);
     writePinLow(SR_SHIFT);
