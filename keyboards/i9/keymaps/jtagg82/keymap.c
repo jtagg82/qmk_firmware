@@ -6,7 +6,10 @@
 
 enum my_keycodes { //unused
     JT_ENC = SAFE_RANGE,
-    JT_SW
+    JT_SW,
+    JT_SUDO,
+    RD_LEFT,
+    RD_RGHT
 };
 
 // tap dance enum
@@ -14,7 +17,7 @@ enum tap_dance {
 	JT_NUM = 0,
 	JT_CAPS,
 	JT_SCROLL,
-	JT_F4,
+	JT_F4
 };
 
 // Define a type for as many tap dance states as you need
@@ -51,8 +54,8 @@ void scroll_reset(qk_tap_dance_state_t *state, void *user_data);
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
     _QW,
-    _FN,
     _NV,
+    _FN,
     _60,
     _6F
 };
@@ -61,22 +64,27 @@ bool is_alt_tab_active = false;
 uint16_t alt_tab_timer = 0;
 
 // these are custom short names to keep the layout below cleaner to read
-#define JT_FN LT(_FN, KC_CAPS)
-#define JT_ESC LT(0,KC_ESC) // unused
-#define TD_NUM TD(JT_NUM)
-#define TD_CAP TD(JT_CAPS)
-#define TD_SCL TD(JT_SCROLL)
-#define TD_F4 TD(JT_F4)
-#define WINTAB LWIN(KC_TAB)
-#define LASTWIN LALT(KC_TAB)
-#define UNDO LCTL(KC_Z)
-#define CUT LCTL(KC_X)
-#define COPY LCTL(KC_C)
-#define PASTE LCTL(KC_V)
-#define CLOSE LALT(KC_F4)
-#define RELOAD LCTL(KC_R)
-#define BACK LALT(KC_LEFT)
-#define FORWARD LALT(KC_RIGHT)
+#define JT_FN       LT(_FN, KC_CAPS)
+#define JT_ESC      LT(0,KC_ESC) // unused
+#define TD_NUM      TD(JT_NUM)
+#define TD_CAP      TD(JT_CAPS)
+#define TD_SCL      TD(JT_SCROLL)
+#define TD_F4       TD(JT_F4)
+#define WINTAB      LWIN(KC_TAB)
+#define LASTWIN     LALT(KC_TAB)
+#define UNDO        LCTL(KC_Z)
+#define CUT         LCTL(KC_X)
+#define COPY        LCTL(KC_C)
+#define PASTE       LCTL(KC_V)
+#define CLOSE       LALT(KC_F4)
+#define RELOAD      LCTL(KC_R)
+#define BACK        LALT(KC_LEFT)
+#define FORWARD     LALT(KC_RIGHT)
+#define TASKMAN     C(S(KC_ESC))
+#define CAPTURE     G(A(KC_G))
+#define NEWTAB      C(KC_T)
+#define LASTTAB     C(S(KC_T))
+#define CLOSTAB     C(KC_W)
 
 qk_tap_dance_action_t tap_dance_actions[] = {
     // Tap once for num lock, twice for Calculator
@@ -133,23 +141,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 	_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,       _______ ,   _______,_______,_______,   KC_NUM ,_______,_______,_______,
 	_______    ,KC_MPRV,KC_MPLY,KC_MNXT,_______,_______,_______,_______, KC_UP ,_______,_______,_______,_______,   _______ ,   _______,_______,_______,   KC_BTN3,KC_MS_U,KC_WH_U,
-	_______      ,_______,_______,_______,_______,_______,_______,KC_LEFT,KC_DOWN,KC_RGHT,_______,_______,         _______ ,                              KC_MS_L,KC_MS_D,KC_MS_R,_______,
+	_______      ,_______,JT_SUDO,_______,_______,_______,_______,KC_LEFT,KC_DOWN,KC_RGHT,_______,_______,         _______ ,                              KC_MS_L,KC_MS_D,KC_MS_R,_______,
 	KC_CAPS          , UNDO  ,  CUT  , COPY  , PASTE ,_______,_______,_______,_______,_______,_______,             _______ ,           _______,           KC_WH_L,KC_WH_R,KC_WH_D,
-	_______  , _______ , _______ ,                     _______                     , _______ , _______ , _______ , _______ ,   _______,_______,_______,       KC_BTN1    ,KC_BTN2,_______
+	_______  , _______ , _______ ,                     _______                     , _______ , _______ , _______ , _______ ,   RD_LEFT,_______,RD_RGHT,       KC_BTN1    ,KC_BTN2,_______
 	),
     /* This layer only modifies the function row
      * ┌───┐   ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┐
-     * │   │   │   │   │   │   │ │   │   │   │   │ │   │   │   │   │ │Prv│Nxt│Ply│
+     * │   │   │NTb│   │LTb│CTb│ │Rld│   │LWn│CWn│ │Cap│   │   │TkM│ │Prv│Nxt│Ply│
      * └───┘   └───┴───┴───┴───┘ └───┴───┴───┴───┘ └───┴───┴───┴───┘ └───┴───┴───┘
      */
     [_NV] = LAYOUT(
-	_______,      BACK  ,FORWARD,WINTAB ,LASTWIN,     RELOAD ,_______,_______, CLOSE ,      _______,_______,_______,_______,   KC_MPRV,KC_MNXT,KC_MPLY,                         _______,
+	_______,     NEWTAB ,LASTTAB,RELOAD ,CLOSTAB,     _______,_______,LASTWIN, CLOSE ,      CAPTURE,_______,_______,TASKMAN,   _______,_______,_______,                         _______,
 
 	_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,   _______     ,   _______,_______,_______,   _______,_______,_______,_______,
-	  _______  ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,  _______  ,   _______,_______,_______,   _______,_______,_______,
-	   _______   ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,   _______       ,                              _______,_______,_______,_______,
-		 _______     ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,       _______       ,           _______,           _______,_______,_______,
-	 _______ , _______ , _______ ,                     _______                     , _______ , _______ , _______ , _______ ,   _______,_______,_______,       _______    ,_______,_______
+	_______    ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,  _______  ,   _______,_______,_______,   _______,_______,_______,
+	_______      ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,   _______       ,                              _______,_______,_______,_______,
+	_______          ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,       _______       ,           _______,           _______,_______,_______,
+	_______  , _______ , _______ ,                     _______                     , _______ , _______ , _______ , _______ ,   _______,_______,_______,       _______    ,_______,_______
 	),
 	// [_60] = LAYOUT(
 	// XXXXXXX,     XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,     XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,      XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,   XXXXXXX,_______,XXXXXXX,                         _______,
@@ -201,6 +209,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (IS_LAYER_ON(_60)) {
                     layer_move(_QW);
                 }
+            }
+            return false;
+        case JT_SUDO:
+            if (record->event.pressed) {
+                SEND_STRING(SS_TAP(X_HOME)"sudo "SS_TAP(X_END));
+            }
+            return false;
+        case RD_LEFT:
+            if (record->event.pressed) {
+                // Ctrl+Alt+Home followed by Ctrl+Win+Left
+                SEND_STRING(SS_LCTL(SS_LALT(SS_TAP(X_HOME)))SS_DELAY(500)SS_LCTL(SS_LWIN(SS_TAP(X_LEFT))));
+            }
+            return false;
+        case RD_RGHT:
+            if (record->event.pressed) {
+                // Ctrl+Alt+Home followed by Ctrl+Win+Right
+                SEND_STRING(SS_LCTL(SS_LALT(SS_TAP(X_HOME)))SS_DELAY(500)SS_LCTL(SS_LWIN(SS_TAP(X_RIGHT))));
             }
             return false;
         default:
@@ -337,23 +362,23 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             } else {
                 tap_code(KC_MRWD);
             }
-        } else if (IS_LAYER_ON(_NV)) {
-            if (clockwise)
-            {
-                if (!is_alt_tab_active) {
-                    is_alt_tab_active = true;
-                    register_code(KC_LALT);
-                }
-                alt_tab_timer = timer_read();
-                tap_code16(KC_TAB);
-            } else {
-                if (!is_alt_tab_active) {
-                    is_alt_tab_active = true;
-                    register_code(KC_LALT);
-                }
-                alt_tab_timer = timer_read();
-                tap_code16(S(KC_TAB));
-            }
+        // } else if (IS_LAYER_ON(_NV)) {
+        //     if (clockwise)
+        //     {
+        //         if (!is_alt_tab_active) {
+        //             is_alt_tab_active = true;
+        //             register_code(KC_LALT);
+        //         }
+        //         alt_tab_timer = timer_read();
+        //         tap_code16(KC_TAB);
+        //     } else {
+        //         if (!is_alt_tab_active) {
+        //             is_alt_tab_active = true;
+        //             register_code(KC_LALT);
+        //         }
+        //         alt_tab_timer = timer_read();
+        //         tap_code16(S(KC_TAB));
+        //     }
         } else {
             if (clockwise)
             {
@@ -378,7 +403,7 @@ bool oled_task_user(void) {
             oled_write_P(PSTR("FUNC   "), false);
             break;
         case _NV:
-            oled_write_P(PSTR("+NAV"), false);
+            oled_write_P(PSTR("QWERTY+NAV"), false);
             break;
 		case _60:
             oled_write_P(PSTR("60%    "), false);
@@ -391,28 +416,30 @@ bool oled_task_user(void) {
     }
     oled_write_P(leading?PSTR("  LEAD"):PSTR("      "), false);
 
-    oled_set_cursor(6,2);
-    oled_write_P(PSTR("0123456789 "), false);
-    char buffer[1];
-    oled_write(itoa(default_layer_state, buffer, 10), false);
-    oled_set_cursor(6,3);
-    for (int i = 0; i < 10; i++)
-    {
-        oled_write_P(layer_state_is(i)?PSTR("^"):PSTR(" "), false);
-    }
+    // oled_set_cursor(6,2);
+    // oled_write_P(PSTR("0123456789 "), false);
+    // char buffer[1];
+    // oled_write(itoa(default_layer_state, buffer, 10), false);
+    // oled_set_cursor(6,3);
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     oled_write_P(layer_state_is(i)?PSTR("^"):PSTR(" "), false);
+    // }
 
 	// Host Keyboard Layer Status
-	oled_set_cursor(0, 2);
-	// oled_write_P(PSTR(" Num   Caps   Scroll"), false);
-	// oled_set_cursor(0, 2);
     led_t led_state = host_keyboard_led_state();
+	oled_set_cursor(0, 3);
+	oled_write_P(PSTR(" Num   Caps   Scroll"), false);
+	oled_set_cursor(0, 2);
+	oled_write_P(led_state.num_lock    ? PSTR("  *    ") : PSTR("       "), false);
+	oled_write_P(led_state.caps_lock   ? PSTR("  *    ") : PSTR("       "), false);
+	oled_write_P(led_state.scroll_lock ? PSTR("  *  ")   : PSTR("     "),   false);
 
-    oled_write_P(led_state.num_lock    ? PSTR("N") : PSTR("."), false);
-    oled_write_P(led_state.caps_lock   ? PSTR("C") : PSTR("."), false);
-    oled_write_P(led_state.scroll_lock ? PSTR("S") : PSTR("."), false);
-	// oled_write_P(led_state.num_lock    ? PSTR("  *    ") : PSTR("       "), false);
-	// oled_write_P(led_state.caps_lock   ? PSTR("  *    ") : PSTR("       "), false);
-	// oled_write_P(led_state.scroll_lock ? PSTR("  *  ")   : PSTR("     "),   false);
+
+
+    // oled_write_P(led_state.num_lock    ? PSTR("N") : PSTR("."), false);
+    // oled_write_P(led_state.caps_lock   ? PSTR("C") : PSTR("."), false);
+    // oled_write_P(led_state.scroll_lock ? PSTR("S") : PSTR("."), false);
 
 
     /*
