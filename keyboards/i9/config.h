@@ -3,14 +3,14 @@
 
 #pragma once
 
-#include "config_common.h"
+//#include "config_common.h"
 
 /* USB Device descriptor parameter */
-#define VENDOR_ID    0xFEED
-#define PRODUCT_ID   0x0000
-#define DEVICE_VER   0x0001
-#define MANUFACTURER khaleput
-#define PRODUCT      i9
+// #define VENDOR_ID    0xFEED
+// #define PRODUCT_ID   0x0000
+// #define DEVICE_VER   0x0001
+// #define MANUFACTURER khaleput
+// #define PRODUCT      i9
 
 /* key matrix size */
 #define MATRIX_ROWS 6
@@ -29,9 +29,8 @@
  */
 
 // These aren't used because I have my own matrix scanning.
-#define MATRIX_ROW_PINS {}
-#define MATRIX_COL_PINS {}
-#define UNUSED_PINS
+// #define MATRIX_ROW_PINS {}
+// #define MATRIX_COL_PINS {}
 
 /* COL2ROW, ROW2COL */
 #define DIODE_DIRECTION ROW2COL
@@ -45,14 +44,16 @@
 // OLED
 #define OLED_FONT_WIDTH 6
 #define OLED_FONT_HEIGHT 8
+#define OLED_SCROLL_TIMEOUT 0
+#define OLED_FADE_OUT
 
 // Tapping
 #define TAPPING_TERM 200
 #define TAPPING_TERM_PER_KEY
 
 // Leader key
-#define LEADER_TIMEOUT 300
-#define LEADER_NO_TIMEOUT
+// #define LEADER_TIMEOUT 300
+// #define LEADER_NO_TIMEOUT
 
 // Unicode support type using wincompose
 #define UNICODE_SELECTED_MODES UC_WINC
@@ -61,9 +62,9 @@
 #define DEBOUNCE 5
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
-#define LOCKING_SUPPORT_ENABLE
+// #define LOCKING_SUPPORT_ENABLE
 /* Locking resynchronize hack */
-#define LOCKING_RESYNC_ENABLE
+// #define LOCKING_RESYNC_ENABLE
 
 /*
  * Force NKRO
@@ -102,9 +103,6 @@
 //#define NO_ACTION_TAPPING
 //#define NO_ACTION_ONESHOT
 
-/* disable these deprecated features by default */
-#define NO_ACTION_MACRO
-#define NO_ACTION_FUNCTION
 
 /* Bootmagic Lite key configuration */
 //#define BOOTMAGIC_LITE_ROW 0
