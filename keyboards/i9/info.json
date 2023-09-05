@@ -1,7 +1,13 @@
 {
     "keyboard_name": "khaleput i9",
+	"manufacturer": "Joseph Tagg",
     "url": "",
     "maintainer": "jtagg82",
+    "usb": {
+        "vid": "0xFEED",
+        "pid": "0x1234",
+        "device_version": "1.0.0"
+    }
     "layouts": {
         "LAYOUT": {
             "layout": [

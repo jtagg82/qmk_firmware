@@ -33,7 +33,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record)
 {
-    const uint8_t mask = (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)); // mask representing both SHIFT keys
+    const uint8_t mask = (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT)); // mask representing both SHIFT keys
     switch (keycode)
     {
         case KC_B:
@@ -51,12 +51,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
 bool encoder_update_user(uint8_t index, bool clockwise)
 {
     // ignoring index because there is only one encoder
-    if (clockwise)
-    {
-        tap_code(KC_VOLU);
-    } else {
-        tap_code(KC_VOLD);
-    }
+    clockwise ? tap_code(KC_VOLU) : tap_code(KC_VOLD);
     return false;
 }
 
