@@ -51,9 +51,15 @@
 #define TAPPING_TERM 200
 #define TAPPING_TERM_PER_KEY
 
+// In CAPS Word, Shift will uncapitalize
+#define CAPS_WORD_INVERT_ON_SHIFT
+
 // Leader key
 // #define LEADER_TIMEOUT 300
 // #define LEADER_NO_TIMEOUT
+
+// Always send Escape if Control is pressed so that we get task manager
+#define GRAVE_ESC_CTRL_OVERRIDE
 
 // Unicode support type using wincompose
 #define UNICODE_SELECTED_MODES UC_WINC
