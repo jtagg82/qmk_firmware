@@ -476,12 +476,6 @@ bool oled_task_user(void) {
 					oled_advance_page(true);
 					oled_write_P(PSTR("Layer : "), false);
 					oled_write(layer_names[get_highest_layer(layer_state)], false);
-
-                    oled_advance_page(true);
-                    // char buffer [1];
-                    for (int layer = 0; layer < 10; layer++) {
-                        oled_write_P(layer_state_is(layer)?PSTR("*"):PSTR("."), false);
-                    }
 					break;
                 case FM_DEBUG:
                     oled_write_P(led_state.num_lock    ? PSTR("N") : PSTR("."), false);
