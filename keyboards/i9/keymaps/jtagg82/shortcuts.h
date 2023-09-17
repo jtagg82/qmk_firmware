@@ -1,4 +1,6 @@
-// these are custom short names to keep the layout below cleaner to read
+#pragma once
+
+// these are custom short names to keep the layout cleaner to read
 #define KH_ROT      LT(0, WHEEL)
 #define KH_LCTL     LM(_60, MOD_LCTL)
 #define KH_STAB     LSFT(KC_TAB)

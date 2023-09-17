@@ -13,8 +13,8 @@
 // #define PRODUCT      i9
 
 /* key matrix size */
-#define MATRIX_ROWS 6
-#define MATRIX_COLS 21
+//#define MATRIX_ROWS 6
+//#define MATRIX_COLS 21
 
 /*
  * Keyboard Matrix Assignments
@@ -33,13 +33,13 @@
 // #define MATRIX_COL_PINS {}
 
 /* COL2ROW, ROW2COL */
-#define DIODE_DIRECTION ROW2COL
+// #define DIODE_DIRECTION ROW2COL
 
 // ENCODER
-#define ENCODERS_PAD_A { D2 }
-#define ENCODERS_PAD_B { D3 }
-#define ENCODER_RESOLUTION 4
-#define ENCODER_DEFAULT_POS 0x3
+//#define ENCODERS_PAD_A { D2 }
+// #define ENCODERS_PAD_B { D3 }
+// #define ENCODER_RESOLUTION 4
+// #define ENCODER_DEFAULT_POS 0x3
 
 // OLED
 #define OLED_FONT_WIDTH 6
@@ -52,7 +52,7 @@
 #define TAPPING_TERM_PER_KEY
 
 // In CAPS Word, Shift will uncapitalize
-#define CAPS_WORD_INVERT_ON_SHIFT
+// #define CAPS_WORD_INVERT_ON_SHIFT
 
 // Leader key
 // #define LEADER_TIMEOUT 300
@@ -65,7 +65,7 @@
 #define UNICODE_SELECTED_MODES UC_WINC
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
-#define DEBOUNCE 5
+// #define DEBOUNCE 5
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 // #define LOCKING_SUPPORT_ENABLE
@@ -91,7 +91,7 @@
  * power-up.
  *
  */
-#define FORCE_NKRO
+// #define FORCE_NKRO
 
 /*
  * Feature disable options
