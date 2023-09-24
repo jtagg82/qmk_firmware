@@ -1,3 +1,6 @@
+// Copyright 2021 jtagg82 (@jtagg82)
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 #pragma once
 
 // these are custom short names to keep the layout cleaner to read

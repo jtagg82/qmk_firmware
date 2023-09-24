@@ -10,7 +10,6 @@
         "device_version": "1.0.0",
         "force_nkro": true
     },
-    "diode_direction": "ROW2COL",
     "bootloader": "caterina",
     "develoopment_board": "promicro",
     "processor": "atmega32u4",
@@ -34,13 +33,7 @@
         "enabled": true,
         "invert_on_shift": true
     },
-    "matrix": {
-        "diode_direction": "ROW2COL",
-        "debounce": 5
-    },
-    "matrix_pins": {
-        "custom_lite": true
-    },
+    "diode_direction": "ROW2COL",
     "matrix_size": {
         "cols": 21,
         "rows": 6
