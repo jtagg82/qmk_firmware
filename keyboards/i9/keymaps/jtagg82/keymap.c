@@ -5,7 +5,6 @@
 #include <print.h>
 #include "raw_hid.h"
 #include "shortcuts.h"
-#include "menu.h"
 
 
 typedef union {
