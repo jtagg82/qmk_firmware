@@ -7,6 +7,25 @@
 #include "kbmenu.h"
 
 
+
+
+kb_menu_item_t sub_menu[] = {
+    {"A        ", NULL, NULL, _kb_menu_select_value},
+    {"B        ", NULL, NULL, _kb_menu_select_value},
+    KB_MENU_BACK_ITEM
+};
+
+kb_menu_item_t sub_menu2[] = {
+    {"A2       ", NULL, NULL, _kb_menu_select_value},
+    {"B2       ", NULL, NULL, _kb_menu_select_value},
+    KB_MENU_BACK_ITEM
+};
+
+kb_menu_item_t system_menu[] = {
+    {"submenu  ", sub_menu, NULL, _kb_menu_select_menu},
+    {"submenu2 ", sub_menu2, NULL, _kb_menu_select_menu},
+};
+
 typedef union {
   uint32_t raw;
   struct {
@@ -295,79 +314,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
 		case KH_ROT:
 			if (record->tap.count && record->event.pressed) {
-				switch (wheel_mode) {
-					case WM_VOL:
-						tap_code(KC_MUTE);
-						break;
-					case WM_MENU:
-						switch (current_menu_item) {
-							case MNU_DISP_BRIGHTNESS:
-								wheel_mode = WM_DISPLAY_BRIGHTNESS;
-								break;
-							case MNU_KBD_LAYOUT:
-								wheel_mode = WM_KBD_LAYOUT;
-								break;
-							case MNU_FACE:
-								wheel_mode = WM_FACE;
-								break;
-							case MNU_NKRO:
-								wheel_mode = WM_NKRO;
-								break;
-							case MNU_BOOTLOADER:
-								oled_invert(1);
-								reset_keyboard(); // calls bootloader
-								break;
-							case MNU_EXIT:
-								display_mode = DM_NORMAL;
-								wheel_mode = WM_VOL;
-								oled_clear();
-							default:
-								break;
-						}
-						break;
-					case WM_DISPLAY_BRIGHTNESS:
-						wheel_mode = WM_MENU;
-						user_config.oled_brightness = display_brightness;
-						eeconfig_update_user(user_config.raw);
-						break;
-					case WM_KBD_LAYOUT:
-						switch(current_kbd_layout) {
-							case KBL_QWERTY:
-								layer_move(_QW);
-								break;
-							case KBL_QWERTYPLUS:
-								layer_move(_QJ);
-								break;
-                            case KBL_60:
-								layer_move(_6F);
-								break;
-							default:
-								break;
-						}
-						wheel_mode = WM_MENU;
-						user_config.default_layer = get_highest_layer(layer_state);
-						eeconfig_update_user(user_config.raw);
-						break;
-					case WM_FACE:
-						wheel_mode = WM_MENU;
-						user_config.default_face = current_face;
-						eeconfig_update_user(user_config.raw);
-						break;
-					case WM_NKRO:
-						clear_keyboard(); // clear to prevent stuck keys
-						keymap_config.nkro = nkro_selection;
-						user_config.nkro_status = nkro_selection == 1 ? true : false;
-						eeconfig_update_user(user_config.raw);
-						wheel_mode = WM_MENU;
-						break;
-					default:
-						break;
-				}
+				if (kb_menu_state.is_active) {
+                    kb_menu_select();
+                } else {
+                    tap_code(KC_MUTE);
+                }
             } else if (record->event.pressed) {
 				if (display_mode == DM_NORMAL) {
+                    kb_menu_activate(system_menu);
 					display_mode = DM_MENU;
 					wheel_mode = WM_MENU;
 				} else {
+                    kb_menu_deactivate();
 					display_mode = DM_NORMAL;
 					wheel_mode = WM_VOL;
 				}
@@ -389,157 +347,145 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // Wheel encoder behavior.
 bool encoder_update_user(uint8_t index, bool clockwise) {
 	// Since there is only one encoder, we dispense with the index verification. It keeps things more readable
-	switch (wheel_mode) {
-		case WM_VOL:
-			if (IS_LAYER_ON(_FN)) {
-				clockwise ? tap_code(KC_MFFD) : tap_code(KC_MRWD);
-			} else {
-				clockwise ? tap_code(KC_VOLU) : tap_code(KC_VOLD);
-			}
-			break;
-		case WM_MENU:
-			if (clockwise) {
-				current_menu_item++;
-				if (current_menu_item >= MNU_MAX) current_menu_item -= MNU_MAX;
-			} else {
-				current_menu_item--;
-				if (current_menu_item < 0) current_menu_item += MNU_MAX;
-			}
-			break;
-		case WM_DISPLAY_BRIGHTNESS:
-			display_brightness += (clockwise ? 16 : -16);
-			oled_set_brightness(display_brightness);
-			break;
-		case WM_KBD_LAYOUT:
-			if (clockwise) {
-				current_kbd_layout++;
-				if (current_kbd_layout >= KBL_MAX) current_kbd_layout -= KBL_MAX;
-			} else {
-				current_kbd_layout--;
-				if (current_kbd_layout < 0) current_kbd_layout += KBL_MAX;
-			}
-			break;
-		case WM_FACE:
-			if (clockwise) {
-				current_face++;
-				if (current_face >= FM_MAX) current_face -= FM_MAX;
-			} else {
-				current_face--;
-				if (current_face < 0) current_face += FM_MAX;
-			}
-			break;
-		case WM_NKRO:
-			if (clockwise) {
-				nkro_selection++;
-				if (nkro_selection >= 2) nkro_selection -= 2;
-			} else {
-				nkro_selection--;
-				if (nkro_selection < 0) nkro_selection += 2;
-			}
-			break;
-		default:
-			break;
-	}
+	if (kb_menu_state.is_active) {
+        if (clockwise) {
+            kb_menu_next();
+        } else {
+            kb_menu_prev();
+        }
+    } else {
+        switch (wheel_mode) {
+            case WM_VOL:
+                if (IS_LAYER_ON(_FN)) {
+                    clockwise ? tap_code(KC_MFFD) : tap_code(KC_MRWD);
+                } else {
+                    clockwise ? tap_code(KC_VOLU) : tap_code(KC_VOLD);
+                }
+                break;
+            case WM_MENU:
+                if (clockwise) {
+                    current_menu_item++;
+                    if (current_menu_item >= MNU_MAX) current_menu_item -= MNU_MAX;
+                } else {
+                    current_menu_item--;
+                    if (current_menu_item < 0) current_menu_item += MNU_MAX;
+                }
+                break;
+            case WM_DISPLAY_BRIGHTNESS:
+                display_brightness += (clockwise ? 16 : -16);
+                oled_set_brightness(display_brightness);
+                break;
+            case WM_KBD_LAYOUT:
+                if (clockwise) {
+                    current_kbd_layout++;
+                    if (current_kbd_layout >= KBL_MAX) current_kbd_layout -= KBL_MAX;
+                } else {
+                    current_kbd_layout--;
+                    if (current_kbd_layout < 0) current_kbd_layout += KBL_MAX;
+                }
+                break;
+            case WM_FACE:
+                if (clockwise) {
+                    current_face++;
+                    if (current_face >= FM_MAX) current_face -= FM_MAX;
+                } else {
+                    current_face--;
+                    if (current_face < 0) current_face += FM_MAX;
+                }
+                break;
+            case WM_NKRO:
+                if (clockwise) {
+                    nkro_selection++;
+                    if (nkro_selection >= 2) nkro_selection -= 2;
+                } else {
+                    nkro_selection--;
+                    if (nkro_selection < 0) nkro_selection += 2;
+                }
+                break;
+            default:
+                break;
+        }
+    }
     return false;
 }
 
 bool oled_task_user(void) {
 	// Get current state of lock keys
 	led_t led_state = host_keyboard_led_state();
+    if (kb_menu_state.is_active) {
+        oled_write_P(led_state.num_lock    ? PSTR("N") : PSTR("."), true);
+        oled_write_P(led_state.caps_lock   ? PSTR("C") : PSTR("."), true);
+        oled_write_P(led_state.scroll_lock ? PSTR("S") : PSTR("."), true);
+        oled_write_P(PSTR("      Menu      "), true);
+        oled_advance_page(true);
 
-	switch (display_mode) {
-		case DM_NORMAL:
-			switch (current_face) {
-				case FM_BASIC:
-					oled_advance_page(true);
-					oled_advance_page(true);
-					oled_write_P(led_state.num_lock    ? PSTR("  *    ") : PSTR("       "), false);
-					oled_write_P(led_state.caps_lock   ? PSTR("  *    ") : PSTR("       "), false);
-					oled_write_P(led_state.scroll_lock ? PSTR("  *  ")   : PSTR("     "), false);
-					oled_advance_page(true);
-					oled_write_P(PSTR(" Num   Caps   Scroll"), false);
-					break;
-				case FM_ADV:
-					oled_write_P(led_state.num_lock    ? PSTR("N") : PSTR("."), false);
-					oled_write_P(is_caps_word_on() ? PSTR("W") : led_state.caps_lock ? PSTR("C") : PSTR("."), false);
-					oled_write_P(led_state.scroll_lock ? PSTR("S") : PSTR("."), false);
-					for (int i = 0; i < 13; i++) {
-                        oled_advance_char();
-                    }
-					oled_write_P(keymap_config.nkro ? PSTR("NKRO") : PSTR("6KRO"), false);
+        oled_write(kb_menu_state.current_menu_name, false);
+        oled_advance_page(true);
+        oled_write(kb_menu_state.current_selection_name, false);
 
-					oled_advance_page(true);
-					oled_write_P(PSTR("Layout: "), false);
-					oled_write(kbd_layout_names[current_kbd_layout], false);
+    } else {
+        switch (display_mode) {
+            case DM_NORMAL:
+                switch (current_face) {
+                    case FM_BASIC:
+                        oled_advance_page(true);
+                        oled_advance_page(true);
+                        oled_write_P(led_state.num_lock    ? PSTR("  *    ") : PSTR("       "), false);
+                        oled_write_P(led_state.caps_lock   ? PSTR("  *    ") : PSTR("       "), false);
+                        oled_write_P(led_state.scroll_lock ? PSTR("  *  ")   : PSTR("     "), false);
+                        oled_advance_page(true);
+                        oled_write_P(PSTR(" Num   Caps   Scroll"), false);
+                        break;
+                    case FM_ADV:
+                        oled_write_P(led_state.num_lock    ? PSTR("N") : PSTR("."), false);
+                        oled_write_P(is_caps_word_on() ? PSTR("W") : led_state.caps_lock ? PSTR("C") : PSTR("."), false);
+                        oled_write_P(led_state.scroll_lock ? PSTR("S") : PSTR("."), false);
+                        for (int i = 0; i < 13; i++) {
+                            oled_advance_char();
+                        }
+                        oled_write_P(keymap_config.nkro ? PSTR("NKRO") : PSTR("6KRO"), false);
 
-					oled_advance_page(true);
-					oled_write_P(PSTR("Layer : "), false);
-					oled_write(layer_names[get_highest_layer(layer_state)], false);
-					break;
-                case FM_DEBUG:
-                    oled_write_P(led_state.num_lock    ? PSTR("N") : PSTR("."), false);
-					oled_write_P(is_caps_word_on() ? PSTR("W") : led_state.caps_lock ? PSTR("C") : PSTR("."), false);
-					oled_write_P(led_state.scroll_lock ? PSTR("S") : PSTR("."), false);
+                        oled_advance_page(true);
+                        oled_write_P(PSTR("Layout: "), false);
+                        oled_write(kbd_layout_names[current_kbd_layout], false);
 
-                    oled_advance_page(true);
-                    // char buffer [1];
-                    for (int layer = 0; layer < 10; layer++) {
-                        oled_write_P(layer_state_is(layer)?PSTR("*"):PSTR("."), false);
-                    }
+                        oled_advance_page(true);
+                        oled_write_P(PSTR("Layer : "), false);
+                        oled_write(layer_names[get_highest_layer(layer_state)], false);
+                        break;
+                    case FM_DEBUG:
+                        oled_write_P(led_state.num_lock    ? PSTR("N") : PSTR("."), false);
+                        oled_write_P(is_caps_word_on() ? PSTR("W") : led_state.caps_lock ? PSTR("C") : PSTR("."), false);
+                        oled_write_P(led_state.scroll_lock ? PSTR("S") : PSTR("."), false);
 
-                    oled_advance_page(true);
-                    uint8_t mods = get_mods();
-                    oled_write_P(mods & MOD_BIT(KC_LCTL) ? PSTR("C") : PSTR("."), false);
-                    oled_write_P(mods & MOD_BIT(KC_LSFT) ? PSTR("S") : PSTR("."), false);
-                    oled_write_P(mods & MOD_BIT(KC_LWIN) ? PSTR("W") : PSTR("."), false);
-                    oled_write_P(mods & MOD_BIT(KC_LALT) ? PSTR("A") : PSTR("."), false);
-                    oled_write_P(PSTR("-"), false);
-                    oled_write_P(mods & MOD_BIT(KC_RALT) ? PSTR("A") : PSTR("."), false);
-                    oled_write_P(mods & MOD_BIT(KC_RWIN) ? PSTR("W") : PSTR("."), false);
-                    oled_write_P(mods & MOD_BIT(KC_RSFT) ? PSTR("S") : PSTR("."), false);
-                    oled_write_P(mods & MOD_BIT(KC_RCTL) ? PSTR("C") : PSTR("."), false);
+                        oled_advance_page(true);
+                        // char buffer [1];
+                        for (int layer = 0; layer < 10; layer++) {
+                            oled_write_P(layer_state_is(layer)?PSTR("*"):PSTR("."), false);
+                        }
 
-                    break;
+                        oled_advance_page(true);
+                        uint8_t mods = get_mods();
+                        oled_write_P(mods & MOD_BIT(KC_LCTL) ? PSTR("C") : PSTR("."), false);
+                        oled_write_P(mods & MOD_BIT(KC_LSFT) ? PSTR("S") : PSTR("."), false);
+                        oled_write_P(mods & MOD_BIT(KC_LWIN) ? PSTR("W") : PSTR("."), false);
+                        oled_write_P(mods & MOD_BIT(KC_LALT) ? PSTR("A") : PSTR("."), false);
+                        oled_write_P(PSTR("-"), false);
+                        oled_write_P(mods & MOD_BIT(KC_RALT) ? PSTR("A") : PSTR("."), false);
+                        oled_write_P(mods & MOD_BIT(KC_RWIN) ? PSTR("W") : PSTR("."), false);
+                        oled_write_P(mods & MOD_BIT(KC_RSFT) ? PSTR("S") : PSTR("."), false);
+                        oled_write_P(mods & MOD_BIT(KC_RCTL) ? PSTR("C") : PSTR("."), false);
 
-				default:
-					break;
-			}
-			break;
-		case DM_MENU:
-			oled_write_P(led_state.num_lock    ? PSTR("N") : PSTR("."), true);
-			oled_write_P(led_state.caps_lock   ? PSTR("C") : PSTR("."), true);
-			oled_write_P(led_state.scroll_lock ? PSTR("S") : PSTR("."), true);
-			oled_write_P(PSTR("      Menu        "), true);
+                        break;
 
-			oled_advance_page(true);
-			oled_write(menu_item_names[current_menu_item], false);
+                    default:
+                        break;
+                }
+                break;
 
-			oled_advance_page(true);
-			switch (wheel_mode) {
-				case WM_KBD_LAYOUT:
-					oled_write(kbd_layout_names[current_kbd_layout], false);
-					break;
-				case WM_FACE:
-					oled_write(face_names[current_face], false);
-					break;
-				case WM_DISPLAY_BRIGHTNESS:
-					oled_write_P(PSTR("<"), false);
-					for (int i = 0; i < 16; i++) {
-						oled_write_P(PSTR(" "), i < display_brightness / 16);
-					}
-					oled_write_P(PSTR(">"), false);
-					break;
-				case WM_NKRO:
-					oled_write(nkro_names[nkro_selection], false);
-					break;
-				default:
-					oled_write_P(PSTR("                     "), false);
-					break;
-			}
-			break;
-
-		default:
-			break;
+            default:
+                break;
+        }
     }
     return false;
 }

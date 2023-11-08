@@ -13,4 +13,4 @@
 OLED_DRIVER = ssd1306
 # ENCODER_ENABLE = yes
 CUSTOM_MATRIX = lite
-SRC += matrix.c
+SRC += matrix.c kbmenu.c
