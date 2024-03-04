@@ -153,7 +153,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_CAPS, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,                                   KC_P4,   KC_P5,   KC_P6,   KC_PPLS,
         KC_LSFT,          KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,             KC_UP,               KC_P1,   KC_P2,   KC_P3,
         KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPC,                             KC_RALT, KC_RGUI, KC_APP,  KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT, KC_PENT,
-                                                              XXXXXXX
+                                                              TO(_QJ)
     ),
 	/*
      * ┌───┐   ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┐            ┌───┐
@@ -179,7 +179,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         CW_TOGG, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,                                   KC_P4,   KC_P5,   KC_P6,   KC_PPLS,
         KC_LSFT,          KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,             KC_UP,               KC_P1,   KC_P2,   KC_P3,
         KC_LCTL, KC_LWIN, KC_LALT,                            KC_SPACE,                           KC_RALT, KC_RGUI, KC_APP,  KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT, KC_PENT,
-                                                              MO(_FN)
+                                                              TO(_QW)
 	),
     /*
      * ┌───┐   ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┐            ┌───┐
@@ -389,10 +389,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // Wheel encoder behavior.
 bool encoder_update_user(uint8_t index, bool clockwise) {
 	// Since there is only one encoder, we dispense with the index verification. It keeps things more readable
+	uint8_t mods = get_mods();
 	switch (wheel_mode) {
 		case WM_VOL:
-			if (IS_LAYER_ON(_FN)) {
-				clockwise ? tap_code(KC_MFFD) : tap_code(KC_MRWD);
+			if (mods & MOD_BIT(KC_LCTL)) {
+				clockwise ? tap_code16(C(KC_PLUS)) : tap_code16(C(KC_MINUS));
+			} else if (mods & MOD_BIT(KC_LALT)) {
+				clockwise ? tap_code16(A(KC_ESC)) : tap_code16(A(S(KC_ESC)));
 			} else {
 				clockwise ? tap_code(KC_VOLU) : tap_code(KC_VOLD);
 			}
