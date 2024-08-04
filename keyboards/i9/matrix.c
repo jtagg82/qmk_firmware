@@ -67,7 +67,7 @@ inline void shift(void) {
 }
 
 void reset_col(void) {
-    // Sets the input of the shift register LOW, which will start a new scan series by activating the first column
+    // Sets the input of the shift register LOW, which will start a new scan by activating the first column
     writePinLow(SR_INPUT);
     shift();
 }
