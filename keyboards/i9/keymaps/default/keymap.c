@@ -21,7 +21,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘ └───┴───┴───┘ └───────┴───┴───┘
      */
     [0] = LAYOUT(
-        KC_ESC,           KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_PSCR, KC_SCRL, KC_PAUS,                               KC_MUTE,
+        KC_ESC,           KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_PSCR, KC_SCRL, KC_PAUS,                               ENC,
 
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,    KC_INS,  KC_HOME, KC_PGUP,    KC_NUM,  KC_PSLS, KC_PAST, KC_PMNS,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,    KC_DEL,  KC_END,  KC_PGDN,    KC_P7,   KC_P8,   KC_P9,
@@ -32,29 +32,33 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     )
 };
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record)
-{
-    const uint8_t mask = (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT)); // mask representing both SHIFT keys
-    switch (keycode)
-    {
-        case KC_B:
-            if (record->event.pressed && ((get_mods() & mask) == mask)) // if B is pressed while both SHIFT keys are pressed
-            {
-                reset_keyboard(); // calls bootloader
-                return false;
-            }
-            break;
-    }
-    return true;
+void keyboard_post_init_user(void) {
+    set_encoder_behavior(KC_MUTE, KC_VOLU, KC_VOLD);
 }
 
+// bool process_record_user(uint16_t keycode, keyrecord_t *record)
+// {
+//     const uint8_t mask = (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT)); // mask representing both SHIFT keys
+//     switch (keycode)
+//     {
+//         case KC_B:
+//             if (record->event.pressed && ((get_mods() & mask) == mask)) // if B is pressed while both SHIFT keys are pressed
+//             {
+//                 reset_keyboard(); // calls bootloader
+//                 return false;
+//             }
+//             break;
+//     }
+//     return true;
+// }
+
 // Quadrature encoder behavior
-bool encoder_update_user(uint8_t index, bool clockwise)
-{
-    // ignoring index because there is only one encoder
-    clockwise ? tap_code(KC_VOLU) : tap_code(KC_VOLD);
-    return false;
-}
+// bool encoder_update_user(uint8_t index, bool clockwise)
+// {
+//     // ignoring index because there is only one encoder
+//     clockwise ? tap_code(KC_VOLU) : tap_code(KC_VOLD);
+//     return false;
+// }
 
 bool oled_task_user(void)
 {

@@ -3,7 +3,7 @@
 	"manufacturer": "Joseph Tagg",
     "url": "",
     "maintainer": "jtagg82",
-    "bootloader_instructions": "Press reset through hole on back of keyboard. Can also be done through the menu (long-press volume wheel).",
+    "bootloader_instructions": "1. Press reset through hole on back of keyboard, 2. Hold both SHIFT keys and press B.",
     "usb": {
         "vid": "0xFEED",
         "pid": "0x1234",
@@ -21,10 +21,10 @@
     },
     "encoder": {
         "rotary": [{
-                "pin_a": "D2",
-                "pin_b": "D3",
-                "resolution": 4
-            }]
+            "pin_a": "D2",
+            "pin_b": "D3",
+            "resolution": 4
+        }]
     },
     "build": {
         "firmware_format": "hex"

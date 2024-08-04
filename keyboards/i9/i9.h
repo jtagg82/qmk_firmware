@@ -31,3 +31,26 @@
     { k40,   k41,   k42,   k43,   k44,   k45,   k46,   k47,   k48,   k49,   k4a,   KC_NO, KC_NO, k4d,   KC_NO, k4f,   KC_NO, k4h,   k4i,   k4j,   KC_NO }, \
     { k50,   k51,   k52,   KC_NO, k54,   k55,   KC_NO, KC_NO, KC_NO, k59,   k5a,   KC_NO, k5c,   k5d,   k5e,   k5f,   k5g,   k5h,   KC_NO, k5j,   k5k }    \
 }
+
+enum kbd_keycodes {
+    ENC = QK_USER_MAX // Place the encoder keycode as the last possible one to not interfere with further definitions in keymaps
+};
+
+typedef enum {
+    ENC_PRESS,
+    ENC_CW,
+    ENC_CCW
+} encoder_action_t;
+
+typedef struct {
+    uint16_t press;
+    uint16_t cw;
+    uint16_t ccw;
+} encoder_behavior_t;
+
+extern encoder_behavior_t encoder_behavior;
+
+void handle_encoder(encoder_action_t action);
+__attribute__((weak)) bool handle_encoder_user(encoder_action_t action);
+void set_encoder_behavior(uint16_t encoder_press, uint16_t encoder_cw, uint16_t encoder_ccw);
+
