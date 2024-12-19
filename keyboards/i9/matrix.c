@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "matrix.h"
-#include "gpio.h"
 
 // The 3 pins needed to control the shift registers
 #define SR_INPUT D7
@@ -45,48 +44,48 @@ GND [| 8     9 |] SQh
 
 void matrix_init_custom(void) {
     // Set the pins that control the shift registers as outputs
-    setPinOutput(SR_INPUT);
-    setPinOutput(SR_LATCH);
-    setPinOutput(SR_SHIFT);
+    gpio_set_pin_output(SR_INPUT);
+    gpio_set_pin_output(SR_LATCH);
+    gpio_set_pin_output(SR_SHIFT);
 
     // Set the row pins as inputs that are pulled HIGH when unconnected
-    setPinInputHigh(ROW1);
-    setPinInputHigh(ROW2);
-    setPinInputHigh(ROW3);
-    setPinInputHigh(ROW4);
-    setPinInputHigh(ROW5);
-    setPinInputHigh(ROW6);
+    gpio_set_pin_input_high(ROW1);
+    gpio_set_pin_input_high(ROW2);
+    gpio_set_pin_input_high(ROW3);
+    gpio_set_pin_input_high(ROW4);
+    gpio_set_pin_input_high(ROW5);
+    gpio_set_pin_input_high(ROW6);
 }
 
 inline void shift(void) {
     // toggles both shifting and latching of the shift register
-    writePinHigh(SR_SHIFT);
-    writePinLow(SR_SHIFT);
-    writePinHigh(SR_LATCH);
-    writePinLow(SR_LATCH);
+    gpio_write_pin_high(SR_SHIFT);
+    gpio_write_pin_low(SR_SHIFT);
+    gpio_write_pin_high(SR_LATCH);
+    gpio_write_pin_low(SR_LATCH);
 }
 
 void reset_col(void) {
     // Sets the input of the shift register LOW, which will start a new scan by activating the first column
-    writePinLow(SR_INPUT);
+    gpio_write_pin_low(SR_INPUT);
     shift();
 }
 
 void next_col(void) {
     // When shifting to the next output, we input a HIGH, which means that we are not activating any further columns
-    writePinHigh(SR_INPUT);
+    gpio_write_pin_high(SR_INPUT);
     shift();
 }
 
 
 static uint8_t read_rows(void) {
     // Read all rows and return them as a single byte
-    return ((readPin(ROW1) ? 0 : 1)  |
-	        (readPin(ROW2) ? 0 : 2)  |
-	        (readPin(ROW3) ? 0 : 4)  |
-            (readPin(ROW4) ? 0 : 8)  |
-            (readPin(ROW5) ? 0 : 16) |
-            (readPin(ROW6) ? 0 : 32));
+    return ((gpio_read_pin(ROW1) ? 0 : 1)  |
+	        (gpio_read_pin(ROW2) ? 0 : 2)  |
+	        (gpio_read_pin(ROW3) ? 0 : 4)  |
+            (gpio_read_pin(ROW4) ? 0 : 8)  |
+            (gpio_read_pin(ROW5) ? 0 : 16) |
+            (gpio_read_pin(ROW6) ? 0 : 32));
 }
 
 bool matrix_scan_custom(matrix_row_t current_matrix[]) {
@@ -95,7 +94,7 @@ bool matrix_scan_custom(matrix_row_t current_matrix[]) {
 
     reset_col(); // Activates first column
     for (uint8_t col = 0; col < MATRIX_COLS; col++) {
-        matrix_io_delay();
+        //matrix_io_delay();
         uint8_t rows = read_rows();
 
         // The following for block checks whether anything changed since the last scan
