@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "quantum.h"
+#include "quantum.h" // IWYU pragma: keep // Include this file to access the QMK keycodes and other QMK specific functions
 
 
 enum kbd_keycodes {
-    ENC = QK_USER_MAX // Place the encoder keycode as the last possible one to not interfere with further definitions in keymaps
+    ENC = QK_KB
 };
 
 typedef enum {

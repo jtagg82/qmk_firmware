@@ -109,36 +109,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     */
 };
 
-void keyboard_post_init_user(void) {
-    set_encoder_behavior(KC_MUTE, KC_VOLU, KC_VOLD);
+/*
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+		default:
+            break;
+    }
+	return true;
 }
-
-// bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-//     switch (keycode) {
-// 		   default:
-//             break;
-//     }
-// 	return true;
-// }
+*/
 
 bool oled_task_user(void) {
-	// Get current state of lock keys
+    // For kb implementation:
+    // return true;
+
+    // Get current state of lock keys
 	led_t led_state = host_keyboard_led_state();
+    oled_write_P(led_state.num_lock    ? PSTR("N") : PSTR("."), false);
+    oled_write_P(is_caps_word_on() ? PSTR("W") : led_state.caps_lock ? PSTR("C") : PSTR("."), false);
+    oled_write_P(led_state.scroll_lock ? PSTR("S") : PSTR("."), false);
 
-// SIMPLE
-/* 	oled_advance_page(true);
-    oled_advance_page(true);
-    oled_write_P(led_state.num_lock    ? PSTR("  *    ") : PSTR("       "), false);
-    oled_write_P(led_state.caps_lock   ? PSTR("  *    ") : PSTR("       "), false);
-    oled_write_P(led_state.scroll_lock ? PSTR("  *  ")   : PSTR("     "), false);
-    oled_advance_page(true);
-    oled_write_P(PSTR(" Num   Caps   Scroll"), false);*/
-
-// NORMAL
+    /*
  	oled_write_P(led_state.num_lock    ? PSTR("NUM ") : PSTR("    "), false);
     oled_write_P(is_caps_word_on() ? PSTR("WORD ") : led_state.caps_lock ? PSTR("CAPS ") : PSTR("     "), false);
     oled_write_P(led_state.scroll_lock ? PSTR("SCROLL ") : PSTR("       "), false);
     oled_write_P(keymap_config.nkro ? PSTR("NKRO") : PSTR("6KRO"), false);
+    */
 
     // oled_advance_page(true);
     // oled_write_P(PSTR("Layout: "), false);

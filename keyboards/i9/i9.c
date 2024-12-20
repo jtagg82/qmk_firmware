@@ -15,7 +15,6 @@ void set_encoder_behavior(uint16_t encoder_press, uint16_t encoder_cw, uint16_t 
     encoder_behavior.ccw = encoder_ccw;
 }
 
-
 /* Simple encoder handler which taps the appropriate encoder_behavior keys. */
 void handle_encoder(encoder_action_t action) {
     if (handle_encoder_user(action)) {
@@ -42,6 +41,11 @@ bool handle_encoder_user(encoder_action_t action) {
     return true;
 }
 
+/* Setting the standard encoder behavior*/
+void keyboard_post_init_kb(void) {
+    keyboard_post_init_user();
+    set_encoder_behavior(KC_MUTE, KC_VOLU, KC_VOLD);
+}
 
 /* Override of the standard keyboard record processing.*/
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
@@ -90,5 +94,25 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
     } else {
         handle_encoder(ENC_CCW);
     }
+    return false;
+}
+
+/* Implements a simple display which shows the states of the 3 locks. */
+bool oled_task_kb(void) {
+    if (!oled_task_user()) return false;
+
+    led_t led_state = host_keyboard_led_state();
+
+    oled_write_P(PSTR(" --  khaleput i9  --"), false);
+
+    oled_advance_page(true);
+    oled_advance_page(true);
+	oled_write_P(led_state.num_lock    ? PSTR("  *    ") : PSTR("       "), false);
+	oled_write_P(led_state.caps_lock   ? PSTR("  *    ") : PSTR("       "), false);
+	oled_write_P(led_state.scroll_lock ? PSTR("  *  ")   : PSTR("     "), false);
+
+    oled_advance_page(true);
+	oled_write_P(PSTR(" Num   Caps   Scroll"), false);
+
     return false;
 }
